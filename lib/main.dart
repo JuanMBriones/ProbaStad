@@ -48,23 +48,53 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
 
-      body: Center(
+      body: new Container(
+        padding: new EdgeInsets.only(left: 50.0, right: 50.0, top: 80),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            // Container(
+            //   margin: new EdgeInsets.all(0.0),
+            //   height: 60,
+            // child:
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                ButtonBar(
-                  children: <Widget>[
-                    RaisedButton(
-                      onPressed: () {},
+                Expanded(
+                  child: new Container(
+                    margin: EdgeInsets.all(5),
+                    child: RaisedButton(
+                      padding: EdgeInsets.symmetric(vertical: 40),
                       child: Text("Input Data Set"),
+                      onPressed: () => null,
                     ),
-                    RaisedButton(
-                      child: Text("HELLO"),
+                  ),
+                ),
+              ],
+            ),
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: new Container(
+                    margin: EdgeInsets.all(5),
+                    child: RaisedButton(
+                      padding: EdgeInsets.symmetric(vertical: 50),
+                      child: Text("Analyze Data"),
+                      onPressed: () => null,
                     ),
-                  ],
+                  ),
+                ),
+                Expanded(
+                  child: new Container(
+                    margin: EdgeInsets.all(5),
+                    child: RaisedButton(
+                      padding: EdgeInsets.symmetric(vertical: 50),
+                      child: Text("Create Graph"),
+                      onPressed: () => null,
+                    ),
+                  ),
                 ),
               ],
             ),
