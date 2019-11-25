@@ -18,18 +18,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -37,26 +26,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-
       body: new Container(
-        padding: new EdgeInsets.only(left: 50.0, right: 50.0, top: 80),
+        padding: new EdgeInsets.only(left: 20.0, right: 20.0, top: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            // Container(
-            //   margin: new EdgeInsets.all(0.0),
-            //   height: 60,
-            // child:
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -66,13 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: RaisedButton(
                       padding: EdgeInsets.symmetric(vertical: 40),
                       child: Text("Input Data Set"),
-                      onPressed: () => null,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DataInput()),
+                        );
+                      },
                     ),
                   ),
                 ),
               ],
             ),
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -101,6 +83,48 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+//Data Input ↓
+class DataInput extends StatefulWidget {
+  @override
+  State createState() => new DynamicList();
+}
+
+class DynamicList extends State<DataInput> {
+  @override
+  List<double> dataPoints = [];
+  final TextEditingController eCtrl = new TextEditingController();
+
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: AppBar(
+        title: Text("Input Data Set"),
+      ),
+      body: new Column(
+        children: <Widget>[
+          new TextField(
+            controller: eCtrl,
+            keyboardType: TextInputType.number,
+            onSubmitted: (text) {
+              double dPoint = double.parse(text);
+              dataPoints.add(dPoint);
+              eCtrl.clear();
+              setState(() {});
+            },
+          ),
+          new Expanded(
+            child: new ListView.builder(
+              itemCount: dataPoints.length,
+              itemBuilder: (BuildContext ctxt, int Index) {
+                return new Text(dataPoints[Index].toString());
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }
