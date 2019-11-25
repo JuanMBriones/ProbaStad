@@ -47,7 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => DataInput()),
+                          MaterialPageRoute(
+                              builder: (context) => InputDataRoute()),
                         );
                       },
                     ),
@@ -64,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: RaisedButton(
                       padding: EdgeInsets.symmetric(vertical: 50),
                       child: Text("Analyze Data"),
-                      onPressed: () => null,
+                      onPressed: () {
+                        DataSet data = new DataSet(DataInput.dataPoints);
+                      },
                     ),
                   ),
                 ),
@@ -88,14 +91,14 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 //Data Input ↓
-class DataInput extends StatefulWidget {
+class InputDataRoute extends StatefulWidget {
   @override
-  State createState() => new DynamicList();
+  State createState() => new DataInput();
 }
 
-class DynamicList extends State<DataInput> {
+class DataInput extends State<InputDataRoute> {
   @override
-  List<double> dataPoints = [];
+  static List<double> dataPoints = [];
   final TextEditingController eCtrl = new TextEditingController();
 
   Widget build(BuildContext context) {
@@ -127,4 +130,60 @@ class DynamicList extends State<DataInput> {
       ),
     );
   }
+}
+
+class DataSet {
+  List<double> data;
+  double mean;
+  double median;
+  List<double> modes;
+  // int range;
+  // double variance;
+  // double stdDeviation;
+
+  DataSet(List<double> dataPoints) {
+    data = dataPoints;
+    data.sort();
+    mean = data.reduce((a, b) => a + b) / data.length;
+    median = getMedian(data);
+    // modes = getModes(dataPoints);
+
+    print("mean: $mean\nmedian: $median\n\nsorted list: $data");
+  }
+
+  double getMedian(data) {
+    if (data.length % 2 == 1) {
+      return data[data.length / 2 + 1];
+    } else {
+      return (data[data.length / 2] + data[data.length / 2 + 1]) / 2;
+    }
+  }
+
+/*
+  List<double> getModes(List<double> dataPoints) {
+    List<double> modes = [];
+    int maxCount = 0;
+
+    while (dataPoints.length > 0) {
+      double num = dataPoints[0];
+      int count = 0;
+      for (int i = 0; i < dataPoints.length; ++i) {
+        if (dataPoints[i] == num) {
+          ++count;
+          dataPoints.removeAt(i);
+          --i;
+        }
+      }
+      if (count > maxCount) {
+        maxCount = count;
+        modes.clear();
+        modes.add(num);
+      } else if (count == maxCount) {
+        modes.add(num);
+      }
+    }
+
+    return modes;
+  }
+  */
 }
