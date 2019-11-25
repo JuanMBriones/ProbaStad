@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text("Analyze Data"),
                       onPressed: () {
                         DataSet data = new DataSet(DataInput.dataPoints);
+                        data.printThings();
                       },
                     ),
                   ),
@@ -134,38 +135,37 @@ class DataInput extends State<InputDataRoute> {
 
 class DataSet {
   List<double> data;
-  double mean;
-  double median;
+  var mean;
+  var median;
   List<double> modes;
   // int range;
-  // double variance;
-  // double stdDeviation;
+  // var variance;
+  // var stdDeviation;
 
   DataSet(List<double> dataPoints) {
     data = dataPoints;
     data.sort();
     mean = data.reduce((a, b) => a + b) / data.length;
     median = getMedian(data);
-    // modes = getModes(dataPoints);
-
-    print("mean: $mean\nmedian: $median\n\nsorted list: $data");
+    modes = getModes(dataPoints);
   }
 
   double getMedian(data) {
+    double half = data.length / 2;
+    int med = half.round();
     if (data.length % 2 == 1) {
-      return data[data.length / 2 + 1];
+      return data[med];
     } else {
-      return (data[data.length / 2] + data[data.length / 2 + 1]) / 2;
+      return (data[med] + data[med - 1]) / 2;
     }
   }
 
-/*
   List<double> getModes(List<double> dataPoints) {
     List<double> modes = [];
     int maxCount = 0;
 
     while (dataPoints.length > 0) {
-      double num = dataPoints[0];
+      var num = dataPoints[0];
       int count = 0;
       for (int i = 0; i < dataPoints.length; ++i) {
         if (dataPoints[i] == num) {
@@ -185,5 +185,8 @@ class DataSet {
 
     return modes;
   }
-  */
+
+  void printThings() {
+    print("mean: $mean\nmedian: $median\nmodes: $modes\nordered list: $data");
+  }
 }
