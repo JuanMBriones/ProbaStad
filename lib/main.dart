@@ -68,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text("Analyze Data"),
                       onPressed: () {
                         DataSet data = new DataSet(DataInput.dataPoints);
-                        data.printThings();
                       },
                     ),
                   ),
@@ -135,20 +134,24 @@ class DataInput extends State<InputDataRoute> {
 }
 
 class DataSet {
-  List<double> data;
-  var mean;
-  var median;
-  List<double> modes;
-  double range;
-  double variance;
-  double stdDeviation;
+  static List<double> data;
+  static var mean;
+  static var median;
+  static List<double> modes;
+  static double range;
+  static double variance;
+  static double stdDeviation;
 
   DataSet(List<double> dataPoints) {
     data = dataPoints;
     data.sort();
+    getStats(data);
+  }
+
+  void getStats(List<double> data) {
     mean = data.reduce((a, b) => a + b) / data.length;
     median = getMedian(data);
-    modes = getModes(dataPoints);
+    modes = getModes(data);
     range = data[data.length - 1] - data[0];
     variance = getVariance(data, mean);
     stdDeviation = sqrt(variance);
