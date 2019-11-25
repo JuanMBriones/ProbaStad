@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() => runApp(MyApp());
 
@@ -138,9 +139,9 @@ class DataSet {
   var mean;
   var median;
   List<double> modes;
-  // int range;
-  // var variance;
-  // var stdDeviation;
+  double range;
+  double variance;
+  double stdDeviation;
 
   DataSet(List<double> dataPoints) {
     data = dataPoints;
@@ -148,6 +149,9 @@ class DataSet {
     mean = data.reduce((a, b) => a + b) / data.length;
     median = getMedian(data);
     modes = getModes(dataPoints);
+    range = data[data.length - 1] - data[0];
+    variance = getVariance(data, mean);
+    stdDeviation = sqrt(variance);
   }
 
   double getMedian(data) {
@@ -160,33 +164,37 @@ class DataSet {
     }
   }
 
-  List<double> getModes(List<double> dataPoints) {
+  List<double> getModes(data) {
     List<double> modes = [];
+    List<double> counted = [];
     int maxCount = 0;
 
-    while (dataPoints.length > 0) {
-      var num = dataPoints[0];
+    for (int i = 0; i < data.length - 1; ++i) {
       int count = 0;
-      for (int i = 0; i < dataPoints.length; ++i) {
-        if (dataPoints[i] == num) {
+      double current = data[i];
+      for (int j = i + 1; j < data.length; ++j) {
+        if (current == data[j] && !counted.contains(current)) {
           ++count;
-          dataPoints.removeAt(i);
-          --i;
         }
       }
       if (count > maxCount) {
         maxCount = count;
         modes.clear();
-        modes.add(num);
+        modes.add(current);
       } else if (count == maxCount) {
-        modes.add(num);
+        modes.add(current);
       }
+      counted.add(current);
     }
-
     return modes;
   }
 
-  void printThings() {
-    print("mean: $mean\nmedian: $median\nmodes: $modes\nordered list: $data");
+  double getVariance(data, mean) {
+    double sum = 0;
+
+    for (int i = 0; i < data.length; ++i) {
+      sum += pow(data[i] - mean, 2);
+    }
+    return sum / data.length;
   }
 }
