@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:random_color/random_color.dart';
+
+
 
 void main() => runApp(MyApp());
 
@@ -80,7 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: RaisedButton(
                       padding: EdgeInsets.symmetric(vertical: 50),
                       child: Text("Create Graph"),
-                      onPressed: () => null,
+                      onPressed: () => goToGrapher(),
+                      /*
+                      * onPressed: () {
+                          DataInput.dataPoints.clear();
+                        },
+                      * */
                     ),
                   ),
                 ),
@@ -122,12 +131,38 @@ class _MyHomePageState extends State<MyHomePage> {
                   data: data,
                 )),
       );
+
+      Alert(
+
+          context: context,
+          title: "Data Set Empty",
+          desc: data.data.toString())
+          .show();
     } else {
       //Si no hay suficientes, manda un warning y no permite cambiar de pantalla
       Alert(
               context: context,
               title: "Data Set Empty",
               desc: "Please input a Data Set in the \"Input Data Set\" section")
+          .show();
+    }
+  }
+
+  void goToGrapher() {
+    if (DataInput.dataPoints.length > 0) {
+      data = DataSet(); //Se inicializa porque hay datos para trabajar
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Grapher(
+            )),
+      );
+    } else {
+      //Si no hay suficientes, manda un warning y no permite cambiar de pantalla
+      Alert(
+          context: context,
+          title: "Data Set Empty",
+          desc: "Please input a Data Set in the \"Input Data Set\" section")
           .show();
     }
   }
@@ -260,7 +295,10 @@ class DataAnalysis extends State<AnalyzeDataRoute> {
 
 class DataSet {
   //Propiedades estadísticas de un DataSet
-  List<double> data = DataInput.dataPoints;
+  List<double> data = DataInput.dataPoints; //
+
+
+
   double mean;
   double median;
   List<double> modes;
@@ -270,6 +308,24 @@ class DataSet {
 
   DataSet() {
     getStats(data); //Nomás para que esté la función getStats()
+
+    data.sort();
+  }
+
+  static Map<double, int> s;
+  void Histograma() {
+
+
+    for(int i=0; i<data.length; i++) {
+      if(s.containsKey(data[i])) {
+        s[data[i]]++;
+      }
+      else {
+        s[data[i]] = 1;
+      }
+    }
+
+
   }
 
   void getStats(List<double> dataPoints) {
@@ -281,6 +337,9 @@ class DataSet {
     range = data[data.length - 1] - data[0];
     variance = getVariance(data, mean);
     stdDeviation = sqrt(variance);
+
+
+
   }
 
   double getMean(data) {
@@ -352,6 +411,273 @@ class DataSet {
   }
 }
 
-class Grapher {
+/*class Grapher {
   //Falta Grapher
+}*/
+
+
+
+
+
+class Grapher extends StatefulWidget {
+  final Widget child;
+
+  Grapher({Key key, this.child}) : super(key: key);
+
+  _GrapherState createState() => _GrapherState();
 }
+
+class _GrapherState extends State<Grapher> {
+  List<charts.Series<Pollution, String>> _seriesData;
+  List<charts.Series<Task, String>> _seriesPieData;
+  List<charts.Series<Sales, int>> _seriesLineData;
+
+
+  final _random = new Random();
+  int next(int min, int max) => min + _random.nextInt(max - min);
+
+  // next ->
+
+  Color colorRan() {
+    int a = next(0, 5);
+    if(a==1) {
+      return Color(0xff3366cc);
+    }
+    if(a==2) {
+      return Color(0xff990099);
+    }
+    if(a==3) {
+      return Color(0xff109618);
+    }
+    if(a==4) {
+      return Color(0xfffdbe19);
+    }
+    else {
+      return Color(0xffff9900);
+    }
+  }
+
+  generateData() {
+    var data1 = [
+      new Pollution(1980, 'USA', 30),
+      new Pollution(1980, 'Asia', 40),
+      new Pollution(1980, 'Europe', 10),
+    ];
+
+
+    var piedata = [
+      new Task(10, colorRan()),
+      new Task(40, colorRan()),
+      new Task(30, colorRan()),
+    ];
+
+    var linesalesdata = [
+      new Sales(0, 10),
+      new Sales(10, 30),
+      new Sales(30, 40),
+
+    ];
+
+
+    //RandomColor _randomColor = RandomColor();
+
+    //Color _color = _randomColor.randomColor();
+
+    _seriesData.add(
+      charts.Series(
+        domainFn: (Pollution pollution, _) => pollution.quantity.toString(),
+        measureFn: (Pollution pollution, _) => pollution.quantity,
+        id: '2017',
+        data: data1,
+        fillPatternFn: (_, __) => charts.FillPatternType.solid,
+        fillColorFn: (Pollution pollution, _) =>
+            charts.ColorUtil.fromDartColor(Color(0xff990099)),
+      ),
+    );
+
+
+    _seriesPieData.add(
+      charts.Series(
+        domainFn: (Task task, _) => task.tasks,
+        measureFn: (Task task, _) => task.taskvalue,
+        colorFn: (Task task, _) =>
+            charts.ColorUtil.fromDartColor(task.colorval),
+        id: 'Air Pollution',
+        data: piedata,
+        labelAccessorFn: (Task row, _) => '${row.taskvalue}',
+      ),
+    );
+
+    _seriesLineData.add(
+      charts.Series(
+        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
+        id: 'Air Pollution',
+        data: linesalesdata,
+        domainFn: (Sales sales, _) => sales.yearval,
+        measureFn: (Sales sales, _) => sales.salesval,
+      ),
+    );
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _seriesData = List<charts.Series<Pollution, String>>();
+    _seriesPieData = List<charts.Series<Task, String>>();
+    _seriesLineData = List<charts.Series<Sales, int>>();
+    generateData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(0xff1976d2),
+            //backgroundColor: Color(0xff308e1c),
+            bottom: TabBar(
+              indicatorColor: Color(0xff9962D0),
+              tabs: [
+                Tab(
+                  icon: Icon(FontAwesomeIcons.solidChartBar),
+                ),
+                Tab(icon: Icon(FontAwesomeIcons.chartPie)),
+                Tab(icon: Icon(FontAwesomeIcons.chartLine)),
+              ],
+            ),
+            title: Text('Flutter Charts'),
+          ),
+          body: TabBarView(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Data analizer: Bar chart',style: TextStyle(fontSize: 24.0,fontWeight: FontWeight.bold),),
+                        Expanded(
+                          child: charts.BarChart(
+                            _seriesData,
+                            animate: true,
+                            barGroupingType: charts.BarGroupingType.grouped,
+                            //behaviors: [new charts.SeriesLegend()],
+                            animationDuration: Duration(seconds: 5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Data analyzed on Pie Chart',style: TextStyle(fontSize: 24.0,fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10.0,),
+                        Expanded(
+                          child: charts.PieChart(
+                              _seriesPieData,
+                              animate: true,
+                              animationDuration: Duration(seconds: 5),
+                              behaviors: [
+                                new charts.DatumLegend(
+                                  outsideJustification: charts.OutsideJustification.endDrawArea,
+                                  horizontalFirst: false,
+                                  desiredMaxRows: 2,
+                                  cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                                  entryTextStyle: charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.purple.shadeDefault,
+                                      fontFamily: 'Georgia',
+                                      fontSize: 11),
+                                )
+                              ],
+                              defaultRenderer: new charts.ArcRendererConfig(
+                                  arcWidth: 100,
+                                  arcRendererDecorators: [
+                                    new charts.ArcLabelDecorator(
+                                        labelPosition: charts.ArcLabelPosition.inside)
+                                  ])),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Data on line chart',style: TextStyle(fontSize: 24.0,fontWeight: FontWeight.bold),),
+                        Expanded(
+                          child: charts.LineChart(
+                              _seriesLineData,
+                              defaultRenderer: new charts.LineRendererConfig(
+                                  includeArea: true, stacked: true),
+                              animate: true,
+                              animationDuration: Duration(seconds: 5),
+                              behaviors: [
+                                new charts.ChartTitle('Years',
+                                    behaviorPosition: charts.BehaviorPosition.bottom,
+                                    titleOutsideJustification:charts.OutsideJustification.middleDrawArea),
+                                new charts.ChartTitle('Sales',
+                                    behaviorPosition: charts.BehaviorPosition.start,
+                                    titleOutsideJustification: charts.OutsideJustification.middleDrawArea),
+                                new charts.ChartTitle('Departments',
+                                  behaviorPosition: charts.BehaviorPosition.end,
+                                  titleOutsideJustification:charts.OutsideJustification.middleDrawArea,
+                                )
+                              ]
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Pollution {
+  String place;
+  int year;
+  int quantity;
+
+  Pollution(this.year, this.place, this.quantity);
+}
+
+class Task {
+  String tasks;
+  double taskvalue;
+  Color colorval;
+
+  Task(this.taskvalue, this.colorval) {
+    //this.task = "ddd";
+    tasks =  taskvalue.toString();
+  }// fr
+}
+
+class Sales {
+  int yearval;
+  int salesval;
+
+  Sales(this.yearval, this.salesval);
+}
+
