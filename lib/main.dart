@@ -27,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DataSet data;
+  DataSet data; //Se declara aquí para poder pasarla
 
   @override
   Widget build(BuildContext context) {
@@ -114,16 +114,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void goToAnalyze() {
     if (DataInput.dataPoints.length > 0) {
-      data = DataSet();
+      data = DataSet(); //Se inicializa porque hay datos para trabajar
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AnalyzeDataRoute(
                   data: data,
-                  // anaData: myData,
                 )),
       );
     } else {
+      //Si no hay suficientes, manda un warning y no permite cambiar de pantalla
       Alert(
               context: context,
               title: "Data Set Empty",
@@ -141,7 +141,8 @@ class InputDataRoute extends StatefulWidget {
 
 class DataInput extends State<InputDataRoute> {
   @override
-  static List<double> dataPoints = [];
+  static List<double> dataPoints =
+      []; //Se declara estática porque sólo hay un data set
   final TextEditingController eCtrl = new TextEditingController();
 
   Widget build(BuildContext context) {
@@ -215,18 +216,21 @@ class DataInput extends State<InputDataRoute> {
 
 //Analyze Data ↓
 class AnalyzeDataRoute extends StatefulWidget {
-  final DataSet data;
+  final DataSet data; //Se declara aquí para pasarlo
 
-  AnalyzeDataRoute({this.data});
+  AnalyzeDataRoute(
+      {this.data}); //Se declara un constructor con parametro nombrado data de tipo DataSet
 
   // @override
-  State createState() => new DataAnalysis(data: this.data);
+  State createState() => new DataAnalysis(
+      data: this.data); //Se pasa el DataSet con el constructor del estado
 }
 
 class DataAnalysis extends State<AnalyzeDataRoute> {
-  final DataSet data;
+  final DataSet
+      data; //Se declara para que sepa que DataAnalysis tiene un DataSet
 
-  DataAnalysis({this.data});
+  DataAnalysis({this.data}); //Constructor
 
   Widget build(BuildContext ctxt) {
     return Scaffold(
@@ -242,7 +246,9 @@ class DataAnalysis extends State<AnalyzeDataRoute> {
               margin: new EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[Text(data.printThings())],
+                children: <Widget>[
+                  Text(data.printThings())
+                ], //Gracias a todo ese rodeo de "this.data" podemos acceder a los datos en esta clase que es hijo del hijo del hijo del hijo
               ),
             ),
           ],
@@ -253,6 +259,7 @@ class DataAnalysis extends State<AnalyzeDataRoute> {
 }
 
 class DataSet {
+  //Propiedades estadísticas de un DataSet
   List<double> data = DataInput.dataPoints;
   double mean;
   double median;
@@ -262,8 +269,7 @@ class DataSet {
   double stdDeviation;
 
   DataSet() {
-    getStats(data);
-    // printThings();
+    getStats(data); //Nomás para que esté la función getStats()
   }
 
   void getStats(List<double> dataPoints) {
@@ -341,8 +347,11 @@ class DataSet {
   }
 
   String printThings() {
+    //Debugging a la antiguita
     return "mean: $mean\nmedian: $median\nmodes: $modes\nordered list: $data\nvariance: $variance\nstd deviation: $stdDeviation";
   }
 }
 
-class Grapher {}
+class Grapher {
+  //Falta Grapher
+}
