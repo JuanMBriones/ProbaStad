@@ -459,9 +459,9 @@ class _GrapherState extends State<Grapher> {
 
   generateData() {
     var data1 = [
-      new Pollution(1980, 'USA', 30),
-      new Pollution(1980, 'Asia', 40),
-      new Pollution(1980, 'Europe', 10),
+      new Pollution(30),
+      new Pollution(40),
+      new Pollution(10),
     ];
 
 
@@ -656,11 +656,12 @@ class _GrapherState extends State<Grapher> {
 }
 
 class Pollution {
-  String place;
-  int year;
+  String routlator;
   int quantity;
 
-  Pollution(this.year, this.place, this.quantity);
+  Pollution(this.quantity) {
+    routlator = quantity.toString();
+  }
 }
 
 class Task {
