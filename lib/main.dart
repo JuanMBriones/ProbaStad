@@ -27,6 +27,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  DataSet data;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,9 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void goToAnalyze() {
     if (DataInput.dataPoints.length > 0) {
+      data = DataSet();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AnalyzeDataRoute()),
+        MaterialPageRoute(
+            builder: (context) => AnalyzeDataRoute(
+                  data: data,
+                  // anaData: myData,
+                )),
       );
     } else {
       Alert(
@@ -208,13 +215,18 @@ class DataInput extends State<InputDataRoute> {
 
 //Analyze Data ↓
 class AnalyzeDataRoute extends StatefulWidget {
-  @override
-  State createState() => new DataAnalysis();
+  final DataSet data;
+
+  AnalyzeDataRoute({this.data});
+
+  // @override
+  State createState() => new DataAnalysis(data: this.data);
 }
 
 class DataAnalysis extends State<AnalyzeDataRoute> {
-  // @override
-  DataSet myData = new DataSet();
+  final DataSet data;
+
+  DataAnalysis({this.data});
 
   Widget build(BuildContext ctxt) {
     return Scaffold(
@@ -222,13 +234,16 @@ class DataAnalysis extends State<AnalyzeDataRoute> {
         title: Text("Analyze Data"),
       ),
       body: new Container(
-        padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[Column()],
+            Card(
+              elevation: 5,
+              margin: new EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[Text(data.printThings())],
+              ),
             ),
           ],
         ),
@@ -325,9 +340,8 @@ class DataSet {
     return sum / data.length;
   }
 
-  void printThings() {
-    print(
-        "mean: $mean\nmedian: $median\nmodes: $modes\nordered list: $data\nvariance: $variance\nstd deviation: $stdDeviation");
+  String printThings() {
+    return "mean: $mean\nmedian: $median\nmodes: $modes\nordered list: $data\nvariance: $variance\nstd deviation: $stdDeviation";
   }
 }
 
