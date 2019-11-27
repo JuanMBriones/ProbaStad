@@ -424,10 +424,10 @@ class Grapher extends StatefulWidget {
 
   Grapher({Key key, this.child}) : super(key: key);
 
-  _GrapherState createState() => _GrapherState();
+  GrapherState createState() => GrapherState();
 }
 
-class _GrapherState extends State<Grapher> {
+class GrapherState extends State<Grapher> {
   List<charts.Series<Pollution, String>> _seriesData;
   List<charts.Series<Task, String>> _seriesPieData;
   List<charts.Series<Sales, int>> _seriesLineData;
@@ -466,11 +466,11 @@ class _GrapherState extends State<Grapher> {
 
 
     var piedata = [
+
       new Task(10, colorRan()),
       new Task(40, colorRan()),
       new Task(30, colorRan()),
     ];
-
     var linesalesdata = [
       new Sales(0, 10),
       new Sales(10, 30),
@@ -478,6 +478,7 @@ class _GrapherState extends State<Grapher> {
 
     ];
 
+    //
 
     //RandomColor _randomColor = RandomColor();
 
