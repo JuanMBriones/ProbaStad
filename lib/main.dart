@@ -132,12 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 )),
       );
 
-      Alert(
+      /*Alert( // muestra los elementos de Data<list>
 
           context: context,
           title: "Data Set Empty",
           desc: data.data.toString())
-          .show();
+          .show();*/
     } else {
       //Si no hay suficientes, manda un warning y no permite cambiar de pantalla
       Alert(
@@ -491,7 +491,7 @@ class _GrapherState extends State<Grapher> {
         data: data1,
         fillPatternFn: (_, __) => charts.FillPatternType.solid,
         fillColorFn: (Pollution pollution, _) =>
-            charts.ColorUtil.fromDartColor(Color(0xff990099)),
+            charts.ColorUtil.fromDartColor(pollution.colorval),
       ),
     );
 
@@ -510,7 +510,7 @@ class _GrapherState extends State<Grapher> {
 
     _seriesLineData.add(
       charts.Series(
-        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
+        colorFn: (__, _) => charts.ColorUtil.fromDartColor(colorRan()),
         id: 'Air Pollution',
         data: linesalesdata,
         domainFn: (Sales sales, _) => sales.yearval,
@@ -567,7 +567,7 @@ class _GrapherState extends State<Grapher> {
                             animate: true,
                             barGroupingType: charts.BarGroupingType.grouped,
                             //behaviors: [new charts.SeriesLegend()],
-                            animationDuration: Duration(seconds: 5),
+                            animationDuration: Duration(seconds: 1),
                           ),
                         ),
                       ],
@@ -588,7 +588,7 @@ class _GrapherState extends State<Grapher> {
                           child: charts.PieChart(
                               _seriesPieData,
                               animate: true,
-                              animationDuration: Duration(seconds: 5),
+                              animationDuration: Duration(seconds: 2),
                               behaviors: [
                                 new charts.DatumLegend(
                                   outsideJustification: charts.OutsideJustification.endDrawArea,
@@ -627,7 +627,7 @@ class _GrapherState extends State<Grapher> {
                               defaultRenderer: new charts.LineRendererConfig(
                                   includeArea: true, stacked: true),
                               animate: true,
-                              animationDuration: Duration(seconds: 5),
+                              animationDuration: Duration(seconds: 2),
                               behaviors: [
                                 new charts.ChartTitle('Years',
                                     behaviorPosition: charts.BehaviorPosition.bottom,
@@ -656,11 +656,38 @@ class _GrapherState extends State<Grapher> {
 }
 
 class Pollution {
+
+
+  final _random = new Random();
+  int next(int min, int max) => min + _random.nextInt(max - min);
+
+  Color colorRan() {
+    int a = next(0, 5);
+    if(a==1) {
+      return Color(0xff3366cc);
+    }
+    if(a==2) {
+      return Color(0xff990099);
+    }
+    if(a==3) {
+      return Color(0xff109618);
+    }
+    if(a==4) {
+      return Color(0xfffdbe19);
+    }
+    else {
+      return Color(0xffff9900);
+    }
+  }
+
+
   String routlator;
   int quantity;
+  Color colorval;
 
   Pollution(this.quantity) {
     routlator = quantity.toString();
+    colorval = colorRan();
   }
 }
 
